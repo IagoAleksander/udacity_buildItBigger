@@ -1,0 +1,5 @@
+<resources>
+    <string name="app_name">androidJoker</string>
+    <string name="general_error">Ops, an error occurred!</string>
+    <string name="another_joke_button">Another!</string>
+</resources>
