@@ -2,10 +2,13 @@ package com.udacity.gradle.builditbigger;
 
 
 import android.os.Bundle;
+import android.support.annotation.Nullable;
 import android.support.v4.app.Fragment;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
+import android.widget.ImageView;
 
 import com.google.android.gms.ads.AdListener;
 import com.google.android.gms.ads.AdRequest;
@@ -24,29 +27,28 @@ public class MainFragment extends Fragment {
 
         mInterstitialAd = new InterstitialAd(getActivity());
         mInterstitialAd.setAdUnitId(getString(R.string.banner_ad_unit_id));
-        mInterstitialAd.loadAd(new AdRequest.Builder().build());
-        mInterstitialAd.setAdListener(new AdListener() {
+
+        return inflater.inflate(R.layout.fragment_main, container, false);
+    }
+
+    @Override
+    public void onViewCreated(View view, @Nullable Bundle savedInstanceState) {
+        Button showJoke = view.findViewById(R.id.bt_joke);
+        showJoke.setOnClickListener(new View.OnClickListener() {
             @Override
-            public void onAdClosed() {
-                mInterstitialAd.loadAd(new AdRequest.Builder().build());
+            public void onClick(View view) {
                 new EndpointAsyncTask().execute(getActivity());
             }
         });
-
-        new EndpointAsyncTask().execute(getActivity());
-
-
-        return inflater.inflate(R.layout.fragment_main, container, false);
     }
 
     @Override
     public void onResume() {
         super.onResume();
 
+        mInterstitialAd.loadAd(new AdRequest.Builder().build());
         if (mInterstitialAd.isLoaded()) {
             mInterstitialAd.show();
-        } else {
-            new EndpointAsyncTask().execute(getActivity());
         }
     }
 }

@@ -1,8 +1,11 @@
 package com.udacity.gradle.builditbigger;
 
+import android.app.Activity;
+import android.app.ActivityOptions;
 import android.content.Context;
 import android.content.Intent;
 import android.os.AsyncTask;
+import android.util.Log;
 
 import com.google.api.client.extensions.android.http.AndroidHttp;
 import com.google.api.client.extensions.android.json.AndroidJsonFactory;
@@ -13,12 +16,12 @@ import com.udacity.gradle.builditbigger.backend.myApi.MyApi;
 
 import java.io.IOException;
 
-class EndpointAsyncTask extends AsyncTask<Context, Void, String> {
+class EndpointAsyncTask extends AsyncTask<Activity, Void, String> {
     private static MyApi myApiService = null;
-    private Context context;
+    private Activity activity;
 
     @Override
-    protected String doInBackground(Context... params) {
+    protected String doInBackground(Activity... params) {
         if (myApiService == null) {
             MyApi.Builder builder = new
                     MyApi.Builder(AndroidHttp.newCompatibleTransport(),
@@ -35,21 +38,21 @@ class EndpointAsyncTask extends AsyncTask<Context, Void, String> {
             myApiService = builder.build();
         }
 
-        context = params[0];
+        activity = params[0];
 
 
         try {
             return myApiService.tellAJoke().execute().getData();
         } catch (IOException e) {
-            return e.getMessage();
+            Log.d("EndpointAsyncTask", "failed");
+            return "";
         }
     }
 
     @Override
     protected void onPostExecute(String result) {
-        Intent intent = new Intent(context, DisplayJokeActivity.class);
-        // Put the string in the envelope
-        intent.putExtra(Constants.JOKE_BUNDLE,result);
-        context.startActivity(intent);
+
+        if (activity instanceof MainActivity)
+            ((MainActivity) activity).displayJoke(result);
     }
 } 
